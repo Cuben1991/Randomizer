@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignación de Operarios</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Asignación de Operarios a Tramos</h1>
+        <div class="controls">
+            <button onclick="asignarOperarios()">Mostrar Nuevo Listado</button>
+            <button onclick="exportarPDF()">Exportar a PDF</button>
+        </div>
+        <div class="resultados">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Operario</th>
+                        <th>Tramo</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-resultados"></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
