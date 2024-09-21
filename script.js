@@ -13,25 +13,28 @@ function asignarOperarios() {
         "NELSON DAVID MUÑOZ REYES"
     ];
 
-    const tramos = [
-        "Portales 1", "Portales 2", "Valdivia 1", "Valdivia 2", "Rodríguez 1", "Rodríguez 2", 
-        "Matta 1", "Matta 2", "Freire 1", "Freire 2", "Pratt 1", 
-        "Bernardo O'Higgins 1", "Bernardo O'Higgins 2", "Martínez de Rosas 1", 
-        "Martínez de Rosas 2", "José Miguel Carrera 1", "José Miguel Carrera 2", 
-        "José Miguel Carrera 3"
-    ];
+    const tramos = {
+        // Agrupaciones en forma de T o L para tramos cercanos
+        "O'Higgins": ["O'Higgins 1", "O'Higgins 2", "O'Higgins 3"],
+        "Rodríguez": ["Rodríguez 1", "Rodríguez 2"],
+        "Matta": ["Matta 1", "Matta 2"],
+        "Valdivia": ["Valdivia 1", "Valdivia 2"],
+        "Pratt": ["Pratt 1", "Pratt 2"],
+        "Carrera": ["Carrera 1", "Carrera 2", "Carrera 3"],
+        "Portales": ["Portales 1", "Portales 2"],
+        "Freire": ["Freire 1", "Freire 2"]
+    };
 
-    // Tramos preferidos para los operarios con mayor recaudación
     const tramosFrecuenciaAlta = [
-        { operario: "CARLOS RAFAEL ESCAREZ BARRA", tramo: "Carrera 1 - Portales 1" },
-        { operario: "JOSE ANTONIO POYENCURA LLANCAPAN CATRICURA", tramo: "O'higgins 3 - Rodríguez 1" },
-        { operario: "MARIE CARMELLE SIMILIEN", tramo: "O'higgins 5 - Pratt 1" },
-        { operario: "RAFAEL ANTONIO ÁLVAREZ PUENTE", tramo: "O'higgins 4 - Matta 2" }
+        { operario: "CARLOS RAFAEL ESCAREZ BARRA", tramo: "O'Higgins 1" },
+        { operario: "JOSE ANTONIO POYENCURA LLANCAPAN CATRICURA", tramo: "Rodríguez 1" },
+        { operario: "MARIE CARMELLE SIMILIEN", tramo: "Pratt 1" },
+        { operario: "RAFAEL ANTONIO ÁLVAREZ PUENTE", tramo: "Matta 2" }
     ];
 
     let resultados = '';
     const operariosSinAsignar = [];
-    const tramosAsignados = new Set(); // Conjunto para evitar tramos duplicados
+    const tramosAsignados = new Set();
 
     // Función para determinar si un operario recibe su tramo preferido (70% de probabilidad)
     function tieneAltaProbabilidad() {
@@ -40,18 +43,20 @@ function asignarOperarios() {
 
     operarios.forEach((operario) => {
         let tramo = null;
-        // Comprobar si el operario tiene un tramo con alta prioridad
+        // Comprobar si el operario tiene un tramo preferido
         const tramoPreferido = tramosFrecuenciaAlta.find(t => t.operario === operario);
-        
-        // Si tiene un tramo preferido y se cumple la probabilidad, se le asigna ese tramo
+
+        // Si tiene un tramo preferido y la probabilidad lo permite, se le asigna
         if (tramoPreferido && tieneAltaProbabilidad() && !tramosAsignados.has(tramoPreferido.tramo)) {
             tramo = tramoPreferido.tramo;
-            tramosAsignados.add(tramo); // Agregar el tramo al conjunto de asignados
+            tramosAsignados.add(tramo);
         } else {
-            // Asignar uno al azar, siempre que no esté ya asignado
-            let tramosDisponibles = tramos.filter(t => !tramosAsignados.has(t)); // Filtrar los tramos ya asignados
-            tramo = tramosDisponibles.length > 0 ? tramosDisponibles.splice(Math.floor(Math.random() * tramosDisponibles.length), 1)[0] : null;
-            if (tramo) tramosAsignados.add(tramo); // Agregar al conjunto de asignados
+            // Agrupación lógica de tramos por proximidad (por ejemplo, en forma de "T" o "L")
+            const gruposTramos = Object.values(tramos).flat().filter(t => !tramosAsignados.has(t));
+            if (gruposTramos.length > 0) {
+                tramo = gruposTramos.splice(Math.floor(Math.random() * gruposTramos.length), 1)[0];
+                tramosAsignados.add(tramo);
+            }
         }
 
         if (tramo) {
@@ -62,7 +67,6 @@ function asignarOperarios() {
                 </tr>
             `;
         } else {
-            // Si no hay tramos disponibles, agregar el operario a la lista de no asignados
             operariosSinAsignar.push(operario);
         }
     });
